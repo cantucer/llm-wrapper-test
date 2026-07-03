@@ -1,0 +1,24 @@
+services:
+  litellm:
+    image: docker.litellm.ai/berriai/litellm:latest
+    ports:
+      - "4000:4000"
+    environment:
+      DIRECT_VLLM_BASE_URL: ${DIRECT_VLLM_BASE_URL}
+      DIRECT_VLLM_API_KEY: ${DIRECT_VLLM_API_KEY:-dummy}
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-litellm-test}
+    volumes:
+      - ./litellm/litellm_config.yaml:/app/config.yaml:ro
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+
+  bifrost:
+    image: maximhq/bifrost
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./bifrost/data:/app/data
+
+  portkey:
+    image: portkeyai/gateway:latest
+    ports:
+      - "8787:8787"

@@ -1,0 +1,114 @@
+targets:
+  - id: direct_vllm
+    name: Direct vLLM Baseline
+    enabled: true
+    mode: openai_http
+    kind: baseline
+    base_url: "${DIRECT_VLLM_BASE_URL}"
+    api_key_env: "DIRECT_VLLM_API_KEY"
+    model: "qwen3-6"
+    setup_required: false
+    notes: "Direct OpenAI-compatible vLLM endpoint."
+
+  - id: litellm_proxy
+    name: LiteLLM Proxy
+    enabled: true
+    mode: openai_http
+    kind: service_gateway
+    base_url: "http://localhost:4000/v1"
+    api_key_env: "LITELLM_MASTER_KEY"
+    model: "qwen3-6"
+    setup_required: true
+    setup_doc_section: "LiteLLM Proxy"
+
+  - id: bifrost
+    name: Bifrost Gateway
+    enabled: true
+    mode: openai_http
+    kind: service_gateway
+    base_url: "http://localhost:8080/v1"
+    api_key_env: "BIFROST_API_KEY"
+    model: "vllm/qwen3-6"
+    setup_required: true
+    setup_doc_section: "Bifrost"
+
+  - id: portkey_local
+    name: Portkey Gateway Local
+    enabled: false
+    mode: openai_http
+    kind: service_gateway
+    base_url: "http://localhost:8787/v1"
+    api_key_env: "PORTKEY_PROVIDER_API_KEY"
+    model: "qwen3-6"
+    provider: "openai"
+    custom_host: "${DIRECT_VLLM_BASE_URL}"
+    headers:
+      x-portkey-provider: "openai"
+      x-portkey-custom-host: "${DIRECT_VLLM_BASE_URL}"
+    setup_required: true
+    setup_doc_section: "Portkey Gateway"
+
+  - id: helicone_gateway
+    name: Helicone AI Gateway
+    enabled: false
+    mode: openai_http
+    kind: service_gateway
+    base_url: "http://localhost:8081/v1"
+    api_key_env: "HELICONE_API_KEY"
+    model: "qwen3-6"
+    setup_required: true
+    setup_doc_section: "Helicone AI Gateway"
+
+  - id: llm_gateway
+    name: LLM Gateway
+    enabled: false
+    mode: openai_http
+    kind: service_gateway
+    base_url: "http://localhost:3000/v1"
+    api_key_env: "LLM_GATEWAY_API_KEY"
+    model: "qwen3-6"
+    setup_required: true
+    setup_doc_section: "LLM Gateway"
+
+  - id: cloudflare_ai_gateway
+    name: Cloudflare AI Gateway
+    enabled: false
+    mode: managed_gateway
+    kind: managed_gateway
+    base_url: "${CLOUDFLARE_AI_GATEWAY_BASE_URL}"
+    api_key_env: "CLOUDFLARE_AI_GATEWAY_API_KEY"
+    model: "qwen3-6"
+    setup_required: true
+    setup_doc_section: "Cloudflare AI Gateway"
+    notes: "Requires an external Cloudflare account and a vLLM endpoint reachable by Cloudflare."
+
+  - id: kong_ai_gateway
+    name: Kong AI Gateway
+    enabled: false
+    mode: manual_only
+    kind: infra_gateway
+    model: "qwen3-6"
+    setup_required: true
+    setup_doc_section: "Kong AI Gateway"
+    notes: "Infrastructure gateway target. Add a concrete OpenAI-compatible base_url when deployed."
+
+  - id: envoy_ai_gateway
+    name: Envoy AI Gateway
+    enabled: false
+    mode: manual_only
+    kind: infra_gateway
+    model: "qwen3-6"
+    setup_required: true
+    setup_doc_section: "Envoy AI Gateway"
+    notes: "Kubernetes/Envoy setup. Convert to openai_http after deployment."
+
+  - id: litellm_sdk
+    name: LiteLLM SDK Import
+    enabled: false
+    mode: python_sdk
+    kind: sdk_wrapper
+    model: "hosted_vllm/qwen3-6"
+    api_key_env: "DIRECT_VLLM_API_KEY"
+    base_url: "${DIRECT_VLLM_BASE_URL}"
+    setup_required: false
+    notes: "Tests LiteLLM as a Python import, not as a real gateway service."

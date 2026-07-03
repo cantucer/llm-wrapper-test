@@ -1,0 +1,31 @@
+prompts:
+  - id: short_basic
+    category: short
+    description: "Short factual answer."
+    messages:
+      - role: system
+        content: "You are a concise assistant."
+      - role: user
+        content: "Explain what DNS is in one sentence."
+
+  - id: medium_reasoning
+    category: medium
+    description: "Medium reasoning prompt."
+    messages:
+      - role: system
+        content: "You are a careful technical assistant."
+      - role: user
+        content: "Compare API gateways and LLM gateways. Give 5 practical differences."
+
+  - id: long_context
+    category: long
+    description: "Long prompt to test prefill behavior."
+    repeat_user_content: 50
+    messages:
+      - role: system
+        content: "You are a technical summarizer."
+      - role: user
+        content: |
+          Summarize the following artificial document into 5 bullets.
+          LLM gateways provide a unified interface, logging, rate limits,
+          fallback, load balancing, and governance.
