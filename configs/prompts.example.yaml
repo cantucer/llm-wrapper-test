@@ -1,31 +1,60 @@
 prompts:
-  - id: short_basic
-    category: short
-    description: "Short factual answer."
+  # --- Overhead floor: tiny in, tiny out --------------------------------
+  # Near-zero prefill and ~1 token decode. Isolates the fixed per-request
+  # cost of the wrapper (routing, auth, logging hooks) + TTFT floor.
+  - id: overhead_floor
+    category: floor
+    description: "Minimal in/out. Measures fixed wrapper request overhead."
     messages:
       - role: system
-        content: "You are a concise assistant."
+        content: "You are a terse assistant. Follow instructions exactly."
       - role: user
-        content: "Explain what DNS is in one sentence."
+        content: "Reply with exactly this and nothing else: ok"
 
-  - id: medium_reasoning
-    category: medium
-    description: "Medium reasoning prompt."
+  # --- Decode throughput: tiny in, LONG fixed-length out ----------------
+  # The instruction never lets the model stop, so generation is always
+  # truncated at max_tokens => decode length is IDENTICAL every run.
+  # This is the clean signal for inter-token latency / tokens-per-sec.
+  # NOTE: pair with a generous max_tokens (>= 256) in the profile.
+  - id: decode_throughput
+    category: decode
+    description: "Fixed-length decode (truncated at max_tokens). Isolates ITL / throughput."
+    messages:
+      - role: system
+        content: "You are a counter. Output only what is asked."
+      - role: user
+        content: "Count upward starting from 1, one integer per line, and never stop."
+
+  # --- Prefill cost: LARGE in, tiny out ---------------------------------
+  # Big input, ~1 token output, so total latency is dominated by prefill.
+  # repeat_user_content inflates the payload without a huge YAML blob.
+  # Caveat: repeated-identical content can be prefix-cached upstream (this
+  # cancels in the baseline-relative overhead delta) OR by a wrapper's own
+  # response cache (which would show as falsely low/negative overhead --
+  # worth watching for; see decode/floor prompts for un-cacheable checks).
+  - id: prefill_cost
+    category: prefill
+    description: "Large prefill, minimal decode. Isolates prompt-processing overhead."
+    repeat_user_content: 60
+    messages:
+      - role: system
+        content: "You read long inputs and answer in one word."
+      - role: user
+        content: >
+          The following is filler context about LLM gateways: they route,
+          authenticate, log, rate-limit, cache, and observe requests across
+          providers while preserving OpenAI-compatible request and response
+          shapes. After reading all of it, reply with exactly one word: done
+
+  # --- Realistic mixed workload (face validity) -------------------------
+  # Kept from the original set for a lifelike medium prompt. Output length
+  # is NOT deterministic here, so read this one with wider error bars --
+  # it is for realism, not for tight overhead attribution.
+  - id: mixed_reasoning
+    category: mixed
+    description: "Realistic medium prompt. Variable output; interpret with care."
     messages:
       - role: system
         content: "You are a careful technical assistant."
       - role: user
-        content: "Compare API gateways and LLM gateways. Give 5 practical differences."
-
-  - id: long_context
-    category: long
-    description: "Long prompt to test prefill behavior."
-    repeat_user_content: 50
-    messages:
-      - role: system
-        content: "You are a technical summarizer."
-      - role: user
-        content: |
-          Summarize the following artificial document into 5 bullets.
-          LLM gateways provide a unified interface, logging, rate limits,
-          fallback, load balancing, and governance.
+        content: "Compare API gateways and LLM gateways. Give exactly 5 short bullet points."
