@@ -29,6 +29,15 @@ async def run_health_checks(selected_targets):
     )
 
 
+def health_flag_label(health: dict, key: str) -> str:
+    if key not in health:
+        return "not tested"
+    value = health.get(key)
+    if value is None:
+        return "n/a"
+    return "yes" if value else "no"
+
+
 def setup_text(target_id: str, setup_doc_section: str | None) -> str:
     registry = KNOWN_WRAPPERS.get(target_id, {})
     lines = []
@@ -77,10 +86,10 @@ for target in targets:
             "Model": target.model,
             "API key env var exists?": "yes" if target.api_key_value() else "no",
             "Setup required?": "yes" if target.setup_required else "no",
-            "Service reachable?": health.get("service_reachable", "not tested"),
-            "/models works?": health.get("models_works", "not tested"),
-            "Small chat test works?": health.get("chat_works", "not tested"),
-            "Streaming chat test works?": health.get("streaming_works", "not tested"),
+            "Service reachable?": health_flag_label(health, "service_reachable"),
+            "/models works?": health_flag_label(health, "models_works"),
+            "Small chat test works?": health_flag_label(health, "chat_works"),
+            "Streaming chat test works?": health_flag_label(health, "streaming_works"),
             "Status": health.get("status_color", "gray"),
         }
     )
