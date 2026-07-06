@@ -84,7 +84,7 @@ for target in targets:
             "Status": health.get("status_color", "gray"),
         }
     )
-st.dataframe(rows, use_container_width=True, hide_index=True)
+st.dataframe(rows, width="stretch", hide_index=True)
 
 selected_id = st.selectbox("Selected target", [target.id for target in targets])
 selected_target = next(target for target in targets if target.id == selected_id)

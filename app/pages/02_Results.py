@@ -77,7 +77,7 @@ else:
     )
 
     st.subheader("Summary")
-    st.dataframe(summary, use_container_width=True, hide_index=True)
+    st.dataframe(summary, width="stretch", hide_index=True)
 
     chart_cols = st.columns(2)
     chart_cols[0].plotly_chart(
@@ -89,7 +89,7 @@ else:
             barmode="group",
             title="TTFT P50/P95 by target",
         ),
-        use_container_width=True,
+        width="stretch",
     )
     chart_cols[1].plotly_chart(
         px.bar(
@@ -100,12 +100,12 @@ else:
             barmode="group",
             title="Total latency P50/P95 by target",
         ),
-        use_container_width=True,
+        width="stretch",
     )
     chart_cols = st.columns(2)
     chart_cols[0].plotly_chart(
         px.bar(summary, x="target_id", y="error_rate", color="prompt_id", title="Error rate"),
-        use_container_width=True,
+        width="stretch",
     )
     chart_cols[1].plotly_chart(
         px.bar(
@@ -115,7 +115,7 @@ else:
             color="prompt_id",
             title="Tokens/sec by target",
         ),
-        use_container_width=True,
+        width="stretch",
     )
     chart_cols = st.columns(2)
     chart_cols[0].plotly_chart(
@@ -126,7 +126,7 @@ else:
             color="prompt_id",
             title="TTFT overhead vs direct_vllm",
         ),
-        use_container_width=True,
+        width="stretch",
     )
     chart_cols[1].plotly_chart(
         px.bar(
@@ -136,11 +136,11 @@ else:
             color="prompt_id",
             title="Latency overhead vs direct_vllm",
         ),
-        use_container_width=True,
+        width="stretch",
     )
 
 st.subheader("Request rows")
-st.dataframe(filtered, use_container_width=True, hide_index=True)
+st.dataframe(filtered, width="stretch", hide_index=True)
 
 if st.button("Export run"):
     paths = export_run(run_id)

@@ -99,7 +99,7 @@ if targets and prompts and profiles and not config_error:
                     "setup_required": target.setup_required,
                 }
             )
-        st.dataframe(status_rows, use_container_width=True, hide_index=True)
+        st.dataframe(status_rows, width="stretch", hide_index=True)
 
     st.subheader("Select prompts")
     selected_prompts = []
@@ -207,7 +207,7 @@ if targets and prompts and profiles and not config_error:
                         "error_type": event.get("error_type"),
                     }
                 )
-                live_table.dataframe(rows[-100:], use_container_width=True)
+                live_table.dataframe(rows[-100:], width="stretch")
 
         try:
             run_id = asyncio.run(run_benchmark(run_config, progress))

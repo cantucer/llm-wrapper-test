@@ -9,6 +9,10 @@ targets:
     model: "qwen3-6"
     setup_required: false
     notes: "Direct OpenAI-compatible vLLM endpoint."
+    # If your vLLM endpoint serves a self-signed certificate, either:
+    #   verify_ssl: false            # disable verification entirely (not for production)
+    # or:
+    #   ca_bundle_path: "/path/to/ca.pem"  # trust a specific CA bundle instead
 
   - id: litellm_proxy
     name: LiteLLM Proxy

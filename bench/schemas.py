@@ -56,6 +56,8 @@ class TargetConfig(BaseModel):
     setup_required: bool = True
     setup_doc_section: str | None = None
     notes: str | None = None
+    verify_ssl: bool = True
+    ca_bundle_path: str | None = None
 
     @field_validator("id", "name", "model")
     @classmethod
@@ -111,6 +113,11 @@ class TargetConfig(BaseModel):
 
     def api_key_value(self) -> str | None:
         return self.api_key or self.resolved_api_key
+
+    def ssl_verify_value(self) -> bool | str:
+        if self.ca_bundle_path:
+            return self.ca_bundle_path
+        return self.verify_ssl
 
 
 class PromptConfig(BaseModel):

@@ -225,7 +225,9 @@ async def run_streaming_chat_completion(
     response_headers: dict[str, str] = {}
 
     try:
-        async with httpx.AsyncClient(timeout=timeout) as client:
+        async with httpx.AsyncClient(
+            timeout=timeout, verify=target.ssl_verify_value()
+        ) as client:
             async with client.stream(
                 "POST", url, json=payload, headers=headers
             ) as response:
@@ -458,7 +460,9 @@ async def run_non_streaming_chat_completion(
     timeout = httpx.Timeout(timeout_override or profile.timeout_sec)
 
     try:
-        async with httpx.AsyncClient(timeout=timeout) as client:
+        async with httpx.AsyncClient(
+            timeout=timeout, verify=target.ssl_verify_value()
+        ) as client:
             response = await client.post(url, json=payload, headers=headers)
             response_headers = dict(response.headers)
             result.http_status_code = response.status_code
@@ -568,7 +572,9 @@ async def get_models(
     headers = build_headers(target, client_request_id)
     start_time = time.perf_counter()
     try:
-        async with httpx.AsyncClient(timeout=httpx.Timeout(timeout_sec)) as client:
+        async with httpx.AsyncClient(
+            timeout=httpx.Timeout(timeout_sec), verify=target.ssl_verify_value()
+        ) as client:
             response = await client.get(build_models_url(target.base_url), headers=headers)
             latency_ms = (time.perf_counter() - start_time) * 1000
             try:

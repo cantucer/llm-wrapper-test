@@ -27,7 +27,7 @@ selected_targets = st.multiselect("Targets", targets, default=targets)
 filtered = requests[requests["target_id"].isin(selected_targets)]
 
 st.subheader("Request rows")
-st.dataframe(filtered, use_container_width=True, hide_index=True)
+st.dataframe(filtered, width="stretch", hide_index=True)
 
 request_ids = filtered["id"].astype(str).tolist()
 selected_request_id = st.selectbox("Request", request_ids)
@@ -45,7 +45,7 @@ st.subheader("Stream event timeline")
 if events.empty:
     st.info("No stream events stored for this request.")
 else:
-    st.dataframe(events, use_container_width=True, hide_index=True)
+    st.dataframe(events, width="stretch", hide_index=True)
     jsonl = "\n".join(
         json.dumps(item, default=str, ensure_ascii=False)
         for item in events.to_dict(orient="records")

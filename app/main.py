@@ -39,7 +39,7 @@ if runs.empty:
 else:
     st.dataframe(
         runs[["id", "name", "profile_name", "status", "created_at", "started_at", "finished_at"]],
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
     latest_id = str(runs.iloc[0]["id"])

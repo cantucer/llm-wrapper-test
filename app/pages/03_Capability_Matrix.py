@@ -55,9 +55,9 @@ else:
         ["target_id", "capability_name"], keep="last"
     )
     matrix = latest.pivot(index="capability_name", columns="target_id", values="status")
-    st.dataframe(matrix, use_container_width=True)
+    st.dataframe(matrix, width="stretch")
     st.subheader("Details")
-    st.dataframe(latest, use_container_width=True, hide_index=True)
+    st.dataframe(latest, width="stretch", hide_index=True)
     st.download_button(
         "Download capability matrix CSV",
         matrix.to_csv().encode("utf-8"),

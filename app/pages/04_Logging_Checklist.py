@@ -44,7 +44,7 @@ target_df = df[df["target_id"] == target_id].sort_values("feature_name")
 
 edited = st.data_editor(
     target_df[["feature_name", "status", "evidence", "notes"]],
-    use_container_width=True,
+    width="stretch",
     hide_index=True,
     column_config={
         "status": st.column_config.SelectboxColumn("status", options=LOGGING_STATUSES)
@@ -70,7 +70,7 @@ matrix = logging_matrix()
 if matrix.empty:
     st.info("No logging assessments recorded.")
 else:
-    st.dataframe(matrix, use_container_width=True)
+    st.dataframe(matrix, width="stretch")
     st.download_button(
         "Download logging matrix CSV",
         matrix.to_csv().encode("utf-8"),
