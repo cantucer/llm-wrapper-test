@@ -32,7 +32,7 @@ targets:
     kind: service_gateway
     base_url: "http://localhost:8080/v1"
     api_key_env: "BIFROST_API_KEY"
-    model: "vllm/qwen3-6"
+    model: "openai/qwen3-6"
     setup_required: true
     setup_doc_section: "Bifrost"
 

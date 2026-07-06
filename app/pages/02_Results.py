@@ -11,6 +11,25 @@ from bench.metrics import compute_summary
 st.set_page_config(page_title="Results", layout="wide")
 st.title("Results")
 
+
+def percentile_bar_chart(summary, p50_col: str, p95_col: str, title: str):
+    melted = summary.melt(
+        id_vars=["target_id", "prompt_id"],
+        value_vars=[p50_col, p95_col],
+        var_name="metric",
+        value_name="value",
+    )
+    melted["metric"] = melted["metric"].map({p50_col: "P50", p95_col: "P95"})
+    return px.bar(
+        melted,
+        x="target_id",
+        y="value",
+        color="prompt_id",
+        facet_col="metric",
+        barmode="group",
+        title=title,
+    )
+
 runs = list_runs()
 if runs.empty:
     st.info("No benchmark runs recorded yet.")
@@ -81,24 +100,17 @@ else:
 
     chart_cols = st.columns(2)
     chart_cols[0].plotly_chart(
-        px.bar(
-            summary,
-            x="target_id",
-            y=["ttft_p50_ms", "ttft_p95_ms"],
-            color="prompt_id",
-            barmode="group",
-            title="TTFT P50/P95 by target",
+        percentile_bar_chart(
+            summary, "ttft_p50_ms", "ttft_p95_ms", "TTFT P50/P95 by target"
         ),
         width="stretch",
     )
     chart_cols[1].plotly_chart(
-        px.bar(
+        percentile_bar_chart(
             summary,
-            x="target_id",
-            y=["total_latency_p50_ms", "total_latency_p95_ms"],
-            color="prompt_id",
-            barmode="group",
-            title="Total latency P50/P95 by target",
+            "total_latency_p50_ms",
+            "total_latency_p95_ms",
+            "Total latency P50/P95 by target",
         ),
         width="stretch",
     )
